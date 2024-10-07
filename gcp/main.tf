@@ -3,7 +3,6 @@ provider "google" {
   region  = var.region
 }
 
-
 provider "random" {}
 
 provider "http" {}
@@ -11,7 +10,6 @@ provider "http" {}
 data "http" "ip" {
   url = "http://ipecho.net/plain"
 }
-
 
 resource "google_container_cluster" "gke" {
   name               = var.cluster_name
@@ -40,11 +38,9 @@ resource "google_container_cluster" "gke" {
     tags = ["wrongsecrets"]
   }
 
-  master_authorized_networks_config {
-    cidr_blocks {
-      cidr_block   = "${data.http.ip.body}/32"
-      display_name = "user origin"
-    }
+  private_cluster_config {
+    enable_private_nodes = true
+    enable_private_endpoint = true
   }
 
   timeouts {
